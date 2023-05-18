@@ -358,3 +358,52 @@ def search(board):
 
     return []
 
+def make_level_txt(board):
+    letter = ['A', '_']
+    blocks = []
+    for i in range(6):
+        if board[2][i] == 'A':
+            blocks.append(['h', 2, 2, i])
+            break
+
+    for i in range(6):
+        length = 0
+        for j in range(6):
+            if board[i][j] not in letter:
+                if board[i][j].isupper():
+                    if board[i][j] == board[i][j + 1]:
+                        if j + 2 < 6 and board[i][j] == board[i][j + 2]:
+                            length = 3
+                        else:
+                            length = 2
+                        letter.append(board[i][j])
+                        blocks.append(['h', length, i, j])
+
+                else:
+                    if board[i][j] == board[i + 1][j]:
+                        if i + 2 < 6 and board[i][j] == board[i + 2][j]:
+                            length = 3
+                        else:
+                            length = 2
+                        letter.append(board[i][j])
+                        blocks.append(['v', length, i, j])
+
+    out = open('game0.txt', 'w')
+    for i in blocks:
+        out.write('{}, {}, {}, {}\n'.format(i[0], i[1], i[2], i[3]))
+        print(i)
+
+
+while True:
+    board = get_board()
+    path = search(board)
+    # print('Solved length: {}'.format(len(path)))
+    # print(PLIES)
+    if len(path) >= 15:
+        make_level_txt(path[0])
+        # for i in path[0]:
+        #     print(i)
+        print("\nSolved with BFS:\n")
+        print('\n\n'.join(board_str(_) for _ in path))
+        game()
+        break
